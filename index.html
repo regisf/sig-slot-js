@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test OOJ</title>
+        <meta charset="utf-8" />
+        <script type="application/javascript" src="simple-js-inherit.js"></script>
+        <script type="application/javascript" src="event-object.js"></script>
+        <script>
+        /*
+         * The same without Sig/Slog
+         */
+         function theSame() {
+            document.querySelector("button").addEventListener('click', function() {
+                alert(document.querySelector('input').value);
+            });
+         }
+         
+         
+         /**
+          * create the button handler
+          */
+         var ButtonHandler = EventObject.extend({
+           init: function() {
+             this._super();
+             
+             // .bind to keep the application scope 
+             document.querySelector('button').addEventListener('click', this.clicked.bind(this), false);
+           },
+           
+           clicked: function() { 
+             this.emit('clicked');
+           }
+        }); 
+
+        /**
+         * Main application. Create the handler and connect button and application on signal 
+         * clicked
+         */
+        var MyApp = Class.extend({ 
+          init: function() { 
+            this.bh = new ButtonHandler();
+            this.bh.connect('clicked', this.onButtonClicked.bind(this)); 
+          },
+
+          onButtonClicked: function(e) {
+            alert(document.querySelector("input").value);
+          } 
+        }); 
+
+        /**
+         * Start the app when the DOM is ready
+         */
+        document.addEventListener('DOMContentLoaded', function() {var app = new MyApp()}, false); 
+        </script> 
+    </head>
+    <body>
+        <h1 id="value-to-change">Signal Slot Class Based Experiment</h1>
+        <p>This is a test for Signal / Slot based javascript. Please fill the input bellow,
+        click on 'OK' then a alert box will be displayed with the value of the field </p>
+        <div>
+            <input type="text" value="Nothing" /> 
+            <button>OK</button>
+        </div>
+    </body> 
+</html>
